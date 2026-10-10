@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>JavaScript 通讯优先入门 · 离线手册</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.6;color:#1a1a1a;background:#e8e8e8}
+.page{background:#fff;max-width:800px;margin:0 auto;padding:20px}
+@media screen{.page{margin-bottom:16px;box-shadow:0 2px 6px rgba(0,0,0,0.08)}}
+h1{font-size:24px;text-align:center;margin:10px 0 6px;color:#0969da}
+h2{font-size:18px;font-weight:700;margin:0 0 10px;padding-bottom:5px;border-bottom:2px solid #0969da;color:#0969da}
+h3{font-size:14px;font-weight:600;margin:10px 0 5px;color:#24292e}
+p{margin-bottom:6px;color:#333}
+ul,ol{padding-left:20px;margin:5px 0}
+li{margin-bottom:3px}
+small{color:#6e7781;font-size:11px}
+pre{background:#f6f8fa;color:#24292e;border:1px solid #d0d7de;border-radius:4px;padding:7px 10px;font-family:Consolas,"Courier New",monospace;font-size:11.5px;line-height:1.5;overflow-x:auto;white-space:pre-wrap;word-break:break-word;margin:6px 0;page-break-inside:avoid}
+code{font-family:Consolas,"Courier New",monospace;background:#eff1f3;color:#cf222e;padding:1px 4px;border-radius:3px;font-size:11.5px}
+pre code{background:none;color:inherit;padding:0}
+.where{display:inline-block;background:#ddf4ff;color:#0969da;font-size:10px;padding:1px 6px;border-radius:3px;margin-bottom:2px}
+.box{padding:6px 10px;border-radius:4px;margin:6px 0;font-size:12.5px;line-height:1.55}
+.tip{background:#dafbe1;border-left:3px solid #1a7f37}
+.warn{background:#fff8c5;border-left:3px solid #9a6700}
+.note{background:#ddf4ff;border-left:3px solid #0969da}
+.box strong{display:block;margin-bottom:2px}
+.footer{text-align:center;font-size:10px;color:#888;margin-top:10px;padding-top:6px;border-top:1px dashed #ddd}
+.cover h1{margin-top:30px;font-size:26px}
+.cover .sub{text-align:center;color:#6e7781;margin-bottom:20px;font-size:13px}
+.usage{background:#f6f8fa;border:1px solid #d0d7de;border-radius:6px;padding:12px;margin:14px 0}
+.usage h3{margin-top:0;color:#0969da}
+.toc ul{list-style:none;padding:0}
+.toc li{font-size:12px;padding:3px 0;border-bottom:1px dotted #eee;display:flex;justify-content:space-between}
+@media print{
+@page{size:A4;margin:12mm}
+body{background:#fff;font-size:10pt}
+.page{box-shadow:none;margin:0;padding:0;max-width:none;page-break-after:always;break-after:page}
+.page:last-child{page-break-after:auto}
+h1{font-size:20pt}
+h2{font-size:14pt}
+h3{font-size:11pt;margin:6pt 0 3pt}
+p,li{font-size:10pt}
+pre{font-size:9pt;padding:5pt 7pt;background:#f6f8fa!important;color:#24292e!important;border:1px solid #d0d7de!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+code{font-size:9pt}
+.box{padding:4pt 8pt;font-size:9.5pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.where{font-size:8pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.footer{font-size:8pt;color:#666;border-top:none;padding-top:0}
+}
+</style>
+</head>
+<body>
+
+<section class="page cover">
+<h1>JavaScript 通讯优先入门</h1>
+<p class="sub">离线打印手册 · 从零到读懂 Worker 后端</p>
+<div class="usage">
+<h3>怎么用</h3>
+<p>1. 电脑 Chrome 打开这个文件</p>
+<p>2. Ctrl+P（Mac 是 Cmd+P）</p>
+<p>3. 目标改“另存为 PDF”</p>
+<p>4. 展开“更多设置”，勾“背景图形”</p>
+<p>5. 颜色选<strong>黑白</strong>，不要选彩色</p>
+<p>6. A4 纸，边距默认</p>
+<p style="margin-top:6px"><small>本手册按“纸上读、纸上抄”设计，不需要电脑也能学。标有“可选上机”的部分，有兴趣再动手。</small></p>
+</div>
+<div class="toc">
+<h3>目录</h3>
+<ul>
+<li><span>第1章 代码是什么</span><span>2</span></li>
+<li><span>第2章 变量</span><span>3</span></li>
+<li><span>第3章 类型</span><span>4</span></li>
+<li><span>第4章 比较和条件</span><span>5</span></li>
+<li><span>第5章 循环</span><span>6</span></li>
+<li><span>第6章 函数</span><span>7</span></li>
+<li><span>第7章 闭包和 this</span><span>8</span></li>
+<li><span>第8章 数组</span><span>9</span></li>
+<li><span>第9章 对象</span><span>10</span></li>
+<li><span>第10章 JSON</span><span>11</span></li>
+<li><span>第11章 HTML/CSS/JS</span><span>12</span></li>
+<li><span>第12章 DOM</span><span>13</span></li>
+<li><span>第13章 事件</span><span>14</span></li>
+<li><span>第14章 定时器与 localStorage</span><span>15</span></li>
+<li><span>第15章 错误处理</span><span>16</span></li>
+<li><span>第16章 异步</span><span>17</span></li>
+<li><span>第17章 fetch 与离线模拟</span><span>18</span></li>
+<li><span>第18章 CORS</span><span>19</span></li>
+<li><span>第19章 模块化</span><span>20</span></li>
+<li><span>第20章 调试</span><span>21</span></li>
+<li><span>第21章 worker.js 导读</span><span>22</span></li>
+<li><span>第22章 app.js 导读</span><span>23</span></li>
+<li><span>第23章 安全清单</span><span>24</span></li>
+<li><span>第24章 下一步</span><span>25</span></li>
+<li><span>附录A 术语表</span><span>26</span></li>
+<li><span>附录B 练习答案</span><span>27</span></li>
+</ul>
+</div>
+<div class="footer">— 1 —</div>
+</section>
+
+<section class="page">
+<h2>第1章 代码是什么</h2>
+<p>代码就是写给电脑看的命令。你写一句，它做一件事。</p>
+<p>JavaScript 是一种代码，它住在浏览器里。不需要安装任何东西，浏览器自带。</p>
+
+<h3>第一句命令</h3>
+<div class="where">写在 HTML 的 &lt;script&gt; 里</div>
+<pre><code>console.log("你好");</code></pre>
+<p>这行的意思：把“你好”打印出来。</p>
+<div class="box note"><strong>说明</strong><code>console.log(...)</code> 就是“把括号里的东西打印出来”。引号里的字是内容，引号本身不显示。</div>
+
+<h3>多写几行</h3>
+<pre><code>console.log("我叫小明");
+console.log("我13岁");
+console.log(3 + 5);</code></pre>
+<p>每句后面要有分号 <code>;</code>。文字要加引号，数字不用。第三行会输出 <code>8</code>。</p>
+
+<h3>注释</h3>
+<pre><code>// 单行注释，浏览器会跳过
+console.log("能看到");  // 这行后面的也是注释
+/*
+  多行注释
+  可以写好几行
+*/</code></pre>
+<div class="box note"><strong>注释的作用</strong>写给未来的自己看。三个月后你忘了这段代码干嘛的，注释能救你。</div>
+
+<h3>出错了会怎样</h3>
+<pre><code>consol.log("你好");
+// Uncaught ReferenceError: consol is not defined</code></pre>
+<p>意思是：我不认识 <code>consol</code> 这个东西。先看错误第一行，它告诉你哪里错。</p>
+<div class="box warn"><strong>新手最常犯的三个错</strong>1. 拼错单词 <code>consle</code>、<code>consol</code>。2. 用了中文引号“你好”，要用英文引号 <code>"你好"</code>。3. 忘了分号（现代 JS 大部分情况不报错，但养成写分号的习惯）。</div>
+
+<div class="box tip"><strong>纸上练习</strong>1. 写出打印你名字、年龄、最喜欢食物的三行代码。2. 写出打印 <code>100 * 100</code> 的代码。3. 把 <code>console.log("你好")</code> 前面加 <code>//</code>，这行还会打印吗？</div>
+
+<div class="footer">— 2 —</div>
+</section>
+
+<section class="page">
+<h2>第2章 变量</h2>
+<p>变量是一个盒子。你把数据装进去，起个名字，以后用名字找到它。</p>
+
+<h3>let 和 const</h3>
+<pre><code>let age = 18;        // 可以改
+const name = "小明";  // 不可重新赋值
+
+age = 19;       // 可以，age 变成 19
+name = "小红";  // 报错：Assignment to constant variable
+</code></pre>
+
+<div class="box warn"><strong>口诀</strong>值会变用 <code>let</code>，值不变用 <code>const</code>。优先用 <code>const</code>。</div>
+
+<h3>const 声明的对象内部可以改</h3>
+<p>const 锁的是“盒子本身”，不是盒子里的东西。</p>
+<pre><code>const user = { name: "小明" };
+user.name = "小红";       // 可以，改的是盒子里的属性
+console.log(user.name);   // "小红"
+
+user = { name: "小李" };  // 报错，这是换盒子
+</code></pre>
+
+<h3>变量命名规则</h3>
+<ul>
+<li>只能用字母、数字、下划线、美元符号</li>
+<li>不能以数字开头：<code>1name</code> 错，<code>name1</code> 对</li>
+<li>区分大小写：<code>age</code> 和 <code>Age</code> 是两个不同的变量</li>
+<li>不能用保留字：<code>let</code>、<code>const</code>、<code>if</code>、<code>for</code> 不能当变量名</li>
+<li>用有意义的名字：<code>userName</code> 比 <code>a</code> 好</li>
+</ul>
+
+<h3>一次声明多个</h3>
+<pre><code>let a = 1, b = 2, c = 3;
+console.log(a + b + c);  // 6
+</code></pre>
+
+<div class="box tip"><strong>纸上练习</strong>1. 声明一个变量存你的年龄，用 <code>let</code>，打印它。2. 声明一个常量存你的名字，用 <code>const</code>，打印它。3. 尝试给常量重新赋值，写出报错信息是什么。</div>
+
+<div class="footer">— 3 —</div>
+</section>
+
+<section class="page">
+<h2>第3章 类型</h2>
+<p>JS 的每个值都有类型。最常用的几种：</p>
+
+<h3>原始类型</h3>
+<pre><code>typeof "hello"    // "string"    文字
+typeof 42         // "number"    数字
+typeof 3.14       // "number"    小数也是 number
+typeof true       // "boolean"   真/假
+typeof undefined  // "undefined" 未定义
+typeof null       // "object"    历史 bug
+</code></pre>
+
+<div class="box warn"><strong>记住</strong><code>typeof null</code> 返回 <code>"object"</code>，这是 JS 最早的设计失误。判断 null 要用 <code>x === null</code>。</div>
+
+<h3>string 字符串</h3>
+<pre><code>"双引号"
+'单引号'
+`反引号，可以插 ${变量}`</code></pre>
+<p>三种都一样，但反引号能插变量：</p>
+<pre><code>const name = "小明";
+const age = 13;
+console.log(`我叫 ${name}，今年 ${age} 岁`);
+// 我叫 小明，今年 13 岁
+</code></pre>
+
+<h3>number 数字</h3>
+<pre><code>100       // 整数
+3.14      // 小数
+1e3       // 1000，科学计数法
+0x10      // 16，十六进制
+NaN       // 不是数字，比如 0 / 0
+Infinity  // 无穷大，比如 1 / 0
+</code></pre>
+
+<h3>boolean 布尔</h3>
+<p>只有两个值：<code>true</code> 和 <code>false</code>。</p>
+
+<h3>类型转换</h3>
+<pre><code>Number("123")   // 123，字符串转数字
+String(123)     // "123"，数字转字符串
+Boolean(0)      // false
+Boolean(1)      // true
+Boolean("")     // false
+Boolean("abc")  // true
+</code></pre>
+<div class="box note"><strong>假值</strong>以下都是 false：<code>false</code>、<code>0</code>、<code>""</code>（空字符串）、<code>null</code>、<code>undefined</code>、<code>NaN</code>。其他都是 true。</div>
+
+<div class="box tip"><strong>纸上练习</strong>1. 用 <code>typeof</code> 判断 <code>"abc"</code>、<code>123</code>、<code>true</code>、<code>null</code> 的类型。2. 写出用模板字符串输出“我叫X，今年Y岁”的代码。</div>
+
+<div class="footer">— 4 —</div>
+</section>
+
+<section class="page">
+<h2>第4章 比较和条件</h2>
+<p>程序经常判断“是不是”。结果只有两个：<code>true</code> 和 <code>false</code>。</p>
+
+<h3>比较运算符</h3>
+<pre><code>1 === "1"   // false，类型不同，值相同
+1 == "1"    // true，宽松相等，别用
+1 !== "1"   // true，严格不等
+1 != "1"    // false，宽松不等
+1 < 2       // true
+2 >= 2      // true
+null === undefined  // false
+null == undefined   // true
+</code></pre>
+
+<div class="box warn"><strong>永远用 ===</strong><code>==</code> 会做类型转换，结果经常出乎意料。日常写代码只用 <code>===</code> 和 <code>!==</code>。</div>
+
+<h3>?? 和 ?.</h3>
+<pre><code>const input = null;
+const name = input ?? "匿名";  // "匿名"
+
+const user = { address: null };
+const city = user?.address?.city ?? "未知"; // "未知"
+</code></pre>
+<p><code>??</code> 只在左边是 <code>null</code> 或 <code>undefined</code> 时给默认值。<code>?.</code> 安全访问嵌套属性，不会报错。</p>
+
+<h3>if / else</h3>
+<pre><code>const score = 85;
+
+if (score >= 90) {
+  console.log("A");
+} else if (score >= 60) {
+  console.log("及格");
+} else {
+  console.log("不及格");
+}
+// 输出：及格
+</code></pre>
+
+<h3>三元运算符</h3>
+<pre><code>const score = 85;
+const type = score >= 60 ? "过" : "挂";
+console.log(type); // "过"
+</code></pre>
+<p>格式：<code>条件 ? 真时的值 : 假时的值</code>。适合一行写完的二选一。</p>
+
+<h3>switch</h3>
+<pre><code>const day = 3;
+let name;
+
+switch (day) {
+  case 1: name = "周一"; break;
+  case 2: name = "周二"; break;
+  case 3: name = "周三"; break;
+  default: name = "未知";
+}
+console.log(name); // "周三"
+</code></pre>
+<p>多个固定值比较时，<code>switch</code> 比一堆 <code>if</code> 清晰。别忘了 <code>break</code>，不然会一直往下跑。</p>
+
+<div class="box tip"><strong>纸上练习</strong>1. 判断 <code>1 === "1"</code> 和 <code>1 == "1"</code> 的结果。2. 用 if/else 写：年龄 ≥ 18 输出“成年”，否则“未成年”。3. 用三元重写它。</div>
+
+<div class="footer">— 5 —</div>
+</section>
+
+<section class="page">
+<h2>第5章 循环</h2>
+<p>循环让代码重复跑。</p>
+
+<h3>for 循环</h3>
+<pre><code>for (let i = 0; i < 5; i++) {
+  console.log(i);
+}
+// 输出：0 1 2 3 4
+</code></pre>
+<p>拆开看：<code>let i = 0</code> 从 0 开始；<code>i < 5</code> 只要小于 5 就继续；<code>i++</code> 每次加 1。</p>
+
+<h3>for...of</h3>
+<pre><code>const fruits = ["苹果", "香蕉", "橘子"];
+for (const fruit of fruits) {
+  console.log(fruit);
+}
+// 输出：苹果 香蕉 橘子
+</code></pre>
+
+<h3>forEach</h3>
+<pre><code>const nums = [1, 2, 3];
+nums.forEach(n => {
+  console.log(n);
+});
+// 输出：1 2 3
+</code></pre>
+
+<h3>while 循环</h3>
+<pre><code>let i = 0;
+while (i < 3) {
+  console.log(i);
+  i++;
+}
+// 输出：0 1 2
+</code></pre>
+<p>条件为真就一直跑。<strong>注意别写成死循环</strong>（条件永远为真，浏览器会卡死）。</p>
+
+<h3>break 和 continue</h3>
+<pre><code>for (let i = 0; i < 10; i++) {
+  if (i === 5) break;      // 到 5 就停
+  console.log(i);          // 0 1 2 3 4
+}
+
+for (let i = 0; i < 5; i++) {
+  if (i === 2) continue;   // 跳过 2
+  console.log(i);          // 0 1 3 4
+}
+</code></pre>
+
+<div class="box tip"><strong>纸上练习</strong>1. 用 for 打印 1 到 10。2. 把 <code>[1,2,3,4,5]</code> 里每个数乘以 2 打印。3. 用 while 打印 10 到 1。</div>
+
+<div class="footer">— 6 —</div>
+</section>
+
+<section class="page">
+<h2>第6章 函数</h2>
+<p>函数就是给一段代码起个名字，以后叫这个名字就能跑这段代码。</p>
+
+<h3>函数定义与调用</h3>
+<pre><code>function add(a, b) {
+  return a + b;
+}
+console.log(add(2, 3)); // 5
+</code></pre>
+<p><code>a</code> 和 <code>b</code> 是参数，<code>return</code> 返回结果。没写 <code>return</code> 的函数返回 <code>undefined</code>。</p>
+
+<h3>默认参数</h3>
+<pre><code>function greet(name = "陌生人") {
+  return "你好，" + name;
+}
+console.log(greet());       // "你好，陌生人"
+console.log(greet("小明")); // "你好，小明"
+</code></pre>
+
+<h3>箭头函数</h3>
+<pre><code>const add = (a, b) => a + b;
+const square = n => n * n;
+
+console.log(add(2, 3));    // 5
+console.log(square(4));    // 16
+</code></pre>
+<p>一行能写完的，不用写 <code>return</code>。多行的要加 <code>{}</code> 和 <code>return</code>：</p>
+<pre><code>const add = (a, b) => {
+  const sum = a + b;
+  return sum;
+};
+</code></pre>
+
+<h3>函数可以作为参数</h3>
+<pre><code>function run(fn) {
+  fn();
+}
+
+run(() => console.log("被调用了"));
+// 输出：被调用了
+</code></pre>
+
+<div class="box tip"><strong>纸上练习</strong>1. 写函数 <code>double(n)</code>，返回 n×2。2. 用箭头函数重写。3. 写函数 <code>max(a,b)</code>，返回较大的数。</div>
+
+<div class="footer">— 7 —</div>
+</section>
+
+<section class="page">
+<h2>第7章 闭包和 this</h2>
+
+<h3>闭包</h3>
+<p>函数记住了外面的变量，即使外部函数已经执行完。</p>
+<pre><code>function counter() {
+  let count = 0;
+  return function () {
+    count++;
+    return count;
+  };
+}
+
+const c = counter();
+console.log(c()); // 1
+console.log(c()); // 2
+console.log(c()); // 3
+</code></pre>
+<p><code>counter</code> 已经跑完，但内部函数还记得 <code>count</code>。这就是闭包。</p>
+
+<div class="box note"><strong>为什么重要</strong>app.js 里 <code>Utils.api</code> 记住 <code>State.token</code>，就是靠闭包。没有闭包，函数每次调用都从零开始。</div>
+
+<h3>this 简讲</h3>
+<pre><code>const user = {
+  name: "小明",
+  say() {
+    console.log(this.name);
+  }
+};
+
+user.say(); // "小明"  this 指向 user
+
+const fn = user.say;
+fn();       // undefined  this 丢了
+</code></pre>
+<p><code>this</code> 是“谁调用我，我就是谁”。把方法赋值给变量再调用，this 就丢了。</p>
+
+<h3>箭头函数没有自己的 this</h3>
+<pre><code>const obj = {
+  name: "小明",
+  say: () => {
+    console.log(this.name); // undefined
+  }
+};
+</code></pre>
+<p>箭头函数继承外层的 <code>this</code>。回调里用箭头函数，更安全。app.js 大量用箭头函数就是这个原因。</p>
+
+<div class="box tip"><strong>纸上练习</strong>1. 写一个 <code>adder(n)</code>，返回一个每次都加 n 的函数。用它生成“加 5”的函数，调用两次看结果。2. 写对象 <code>{name:"A", hello(){...}}</code>，调用 hello 打印 this.name。</div>
+
+<div class="footer">— 8 —</div>
+</section>
+
+<section class="page">
+<h2>第8章 数组</h2>
+<p>数组是排成一排的盒子，从 0 开始编号。</p>
+
+<pre><code>const nums = [10, 20, 30];
+console.log(nums[0]);     // 10
+console.log(nums.length); // 3
+
+nums.push(40);   // 加到末尾
+console.log(nums);        // [10, 20, 30, 40]
+
+nums.pop();               // 删末尾
+console.log(nums);        // [10, 20, 30]
+</code></pre>
+
+<h3>常用方法</h3>
+<pre><code>const nums = [3, 1, 4, 1, 5];
+
+nums.indexOf(4);         // 2，找位置
+nums.includes(3);        // true，是否包含
+nums.slice(1, 3);        // [1, 4]，切片
+nums.concat([9, 2]);     // [3,1,4,1,5,9,2]，合并
+nums.sort();             // [1,1,3,4,5]，排序
+nums.reverse();          // [5,4,3,1,1]，反转
+nums.join("-");          // "3-1-4-1-5"，拼成字符串
+</code></pre>
+
+<h3>数组三件套</h3>
+<pre><code>const nums = [1, 2, 3, 4];
+
+// map：转换每个元素
+const doubled = nums.map(n => n * 2);
+console.log(doubled);  // [2, 4, 6, 8]
+
+// filter：筛选符合条件的
+const evens = nums.filter(n => n % 2 === 0);
+console.log(evens);    // [2, 4]
+
+// reduce：汇总成一个值
+const sum = nums.reduce((acc, n) => acc + n, 0);
+console.log(sum);      // 10
+</code></pre>
+<div class="box note"><strong>通讯里最常用</strong>从 API 拿到一堆数据，用 <code>map</code> 转换，用 <code>filter</code> 筛选，用 <code>reduce</code> 统计。你发来的 app.js 里全是这三个。</div>
+
+<h3>find</h3>
+<pre><code>const users = [
+  { id: 1, name: "A" },
+  { id: 2, name: "B" }
+];
+const u = users.find(x => x.id === 2);
+console.log(u.name); // "B"
+</code></pre>
+
+<div class="box tip"><strong>纸上练习</strong>1. 用 <code>filter</code> 筛出 <code>[1,2,3,4,5]</code> 里大于 3 的数。2. 用 <code>map</code> 把每个数变成平方。3. 用 <code>reduce</code> 求 <code>[1,2,3,4,5]</code> 的和。</div>
+
+<div class="footer">— 9 —</div>
+</section>
+
+<section class="page">
+<h2>第9章 对象</h2>
+<p>对象是一堆数据，每个格子有名字，不只是编号。</p>
+
+<pre><code>const user = {
+  name: "小明",
+  age: 13,
+  city: "北京"
+};
+
+console.log(user.name);     // "小明"
+console.log(user["age"]);   // 13
+
+user.age = 14;              // 改属性
+user.email = "a@b.com";     // 加新属性
+delete user.city;           // 删属性
+</code></pre>
+
+<h3>解构</h3>
+<pre><code>const { name, age } = user;
+console.log(name); // "小明"
+console.log(age);  // 13
+
+// 重命名
+const { name: userName } = user;
+console.log(userName); // "小明"
+
+// 默认值
+const { phone = "无" } = user;
+console.log(phone); // "无"
+</code></pre>
+
+<h3>展开运算符</h3>
+<pre><code>const copy = { ...user, city: "上海" };
+console.log(copy.city); // "上海"
+// 原来的 user 没变
+
+const merged = { ...user, ...copy };
+// 后面的覆盖前面的
+</code></pre>
+
+<h3>方法</h3>
+<pre><code>const user = {
+  name: "小明",
+  greet() {
+    return "你好，" + this.name;
+  }
+};
+console.log(user.greet()); // "你好，小明"
+</code></pre>
+
+<div class="box tip"><strong>纸上练习</strong>1. 创建一个对象包含你的名字、年龄、食物。2. 用解构拿出名字。3. 用 <code>...</code> 复制它并改城市。</div>
+
+<div class="footer">— 10 —</div>
+</section>
+
+<section class="page">
+<h2>第10章 JSON</h2>
+<p>电脑之间传数据，不能直接传对象。要先把对象变成字符串，传过去再变回来。</p>
+
+<h3>对象 ↔ 字符串</h3>
+<pre><code>const user = { name: "小明", age: 13 };
+
+// 对象 → 字符串
+const str = JSON.stringify(user);
+console.log(str); // '{"name":"小明","age":13}'
+
+// 字符串 → 对象
+const obj = JSON.parse(str);
+console.log(obj.name); // "小明"
+</code></pre>
+
+<div class="box warn"><strong>通讯里最常用</strong>发请求前用 <code>JSON.stringify</code> 转字符串，收到回复后用 <code>JSON.parse</code> 转对象。localStorage 也只能存字符串。</div>
+
+<h3>JSON.parse 会报错</h3>
+<pre><code>JSON.parse("不是JSON");
+// 报错：Unexpected token 不 in JSON at position 0
+</code></pre>
+<p>所以要配合 try/catch（第15章讲）。</p>
+
+<h3>嵌套对象</h3>
+<pre><code>const data = {
+  user: { name: "小明" },
+  posts: [{ id: 1, title: "你好" }]
+};
+
+const str = JSON.stringify(data);
+const obj = JSON.parse(str);
+console.log(obj.user.name);   // "小明"
+console.log(obj.posts[0].title); // "你好"
+</code></pre>
+
+<div class="box tip"><strong>纸上练习</strong>1. 把 <code>{a:1, b:2}</code> 用 <code>JSON.stringify</code> 转成字符串，写出来。2. 把这个字符串用 <code>JSON.parse</code> 转回对象，写下 <code>.a</code> 的值。</div>
+
+<div class="footer">— 11 —</div>
+</section>
+
+<section class="page">
+<h2>第11章 HTML / CSS / JS</h2>
+<p>一个网页由三样东西组成：</p>
+<ul>
+<li><strong>HTML</strong>：骨架。有什么东西。</li>
+<li><strong>CSS</strong>：皮肤。长什么样。</li>
+<li><strong>JavaScript</strong>：肌肉。能做什么。</li>
+</ul>
+
+<h3>完整模板</h3>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="zh-CN"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width,initial-scale=1.0"&gt;
+  &lt;title&gt;我的网页&lt;/title&gt;
+  &lt;style&gt;
+    body { background: #f0f0f0; }
+    h1 { color: red; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;你好&lt;/h1&gt;
+  &lt;button id="btn"&gt;点我&lt;/button&gt;
+
+  &lt;script&gt;
+    document.querySelector("#btn").onclick = () =&gt; {
+      alert("你点了按钮");
+    };
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+<div class="box note"><strong>关键</strong><code>&lt;script&gt;</code> 放 <code>&lt;body&gt;</code> 底部。放 <code>&lt;head&gt;</code> 里，JS 执行时 HTML 还没读完，会找不到元素。</div>
+
+<h3>常用 HTML 标签</h3>
+<pre><code>&lt;h1&gt;大标题&lt;/h1&gt;
+&lt;p&gt;段落&lt;/p&gt;
+&lt;div&gt;块，用来分组&lt;/div&gt;
+&lt;span&gt;行内小块&lt;/span&gt;
+&lt;a href="网址"&gt;链接&lt;/a&gt;
+&lt;img src="图片地址"&gt;
+&lt;input placeholder="输入框"&gt;
+&lt;button&gt;按钮&lt;/button&gt;
+&lt;ul&gt;&lt;li&gt;列表项&lt;/li&gt;&lt;/ul&gt;
+</code></pre>
+
+<h3>常用 CSS</h3>
+<pre><code>选择器 { 属性: 值; }
+
+body { background: #f0f0f0; }
+.box { width: 100px; height: 50px; }
+#title { color: red; font-size: 20px; }
+</code></pre>
+<p><code>.</code> 开头是 class，<code>#</code> 开头是 id。class 可以多个元素用，id 只有一个。</p>
+
+<div class="box tip"><strong>纸上练习</strong>画出上面那段 HTML 的骨架：head 里有什么、body 里有什么、script 在哪。</div>
+
+<div class="footer">— 12 —</div>
+</section>
+
+<section class="page">
+<h2>第12章 DOM</h2>
+<p>DOM 是浏览器把 HTML 变成一棵可以操作的对象树。JS 通过 DOM 找到页面上的元素，改它。</p>
+
+<h3>找元素</h3>
+<pre><code>document.querySelector("#btn");       // 找 id=btn 的第一个
+document.querySelector(".item");      // 找 class=item 的第一个
+document.querySelectorAll(".item");   // 找所有 class=item，返回列表
+document.getElementById("btn");       // 找 id，老写法
+</code></pre>
+
+<h3>改内容</h3>
+<pre><code>// 安全：只显示文本
+el.textContent = "新文字";
+
+// 危险：会渲染 HTML，用户输入可能 XSS
+el.innerHTML = "&lt;b&gt;粗体&lt;/b&gt;";
+</code></pre>
+
+<div class="box warn"><strong>XSS 安全提醒</strong>永远用 <code>textContent</code> 显示用户输入的内容。用 <code>innerHTML</code> 拼接用户输入，别人可以注入恶意脚本。</div>
+
+<h3>改样式</h3>
+<pre><code>el.style.color = "red";
+el.style.fontSize = "20px";
+el.classList.add("active");
+el.classList.remove("active");
+el.classList.toggle("active");  // 有就删，没有就加
+</code></pre>
+
+<h3>创建和删除</h3>
+<pre><code>const li = document.createElement("li");
+li.textContent = "新项目";
+document.querySelector("ul").append(li);
+
+li.remove();  // 删除
+</code></pre>
+
+<h3>读属性</h3>
+<pre><code>input.value;         // 输入框里的内容
+a.href;              // 链接地址
+img.src;             // 图片地址
+</code></pre>
+
+<div class="box tip"><strong>纸上练习</strong>1. 写找 <code>id="box"</code> 的元素的代码。2. 写把它的文字改成“你好”的代码。3. 写创建一个 <code>&lt;p&gt;</code> 并加到 <code>body</code> 的代码。</div>
+
+<div class="footer">— 13 —</div>
+</section>
+
+<section class="page">
+<h2>第13章 事件</h2>
+<p>事件就是“用户做了什么”。点按钮、按键盘、滑鼠标，都是事件。</p>
+
+<h3>addEventListener</h3>
+<pre><code>const btn = document.querySelector("#btn");
+
+btn.addEventListener("click", () => {
+  console.log("被点了");
+});
+</code></pre>
+<p>第一个参数是事件名，第二个是回调函数。</p>
+
+<h3>常用事件</h3>
+<ul>
+<li><code>click</code> 点击</li>
+<li><code>input</code> 输入框内容变化</li>
+<li><code>keydown</code> 按下键盘</li>
+<li><code>submit</code> 表单提交</li>
+<li><code>change</code> 选择框、复选框变化</li>
+</ul>
+
+<h3>键盘</h3>
+<pre><code>input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    console.log("按了回车");
+  }
+});
+</code></pre>
+<p><code>e</code> 是事件对象，包含 <code>e.key</code>、<code>e.target</code> 等信息。</p>
+
+<h3>事件委托</h3>
+<pre><code>const ul = document.querySelector("ul");
+
+ul.addEventListener("click", (e) => {
+  if (e.target.tagName === "LI") {
+    e.target.classList.toggle("done");
+  }
+});
+</code></pre>
+<p>把事件绑在父元素上，利用冒泡处理子元素。适合动态列表——新加的子元素不用再绑。</p>
+
+<h3>阻止默认行为</h3>
+<pre><code>form.addEventListener("submit", (e) => {
+  e.preventDefault();  // 阻止表单刷新页面
+  console.log("提交了");
+});
+</code></pre>
+
+<div class="box tip"><strong>纸上练习</strong>1. 写一个按钮点击打印“你好”的代码。2. 写一个输入框按回车打印里面的内容。3. 用事件委托给 ul 绑定，点 li 时切换 done 类。</div>
+
+<div class="footer">— 14 —</div>
+</section>
+
+<section class="page">
+<h2>第14章 定时器与 localStorage</h2>
+
+<h3>setTimeout：等一会儿执行一次</h3>
+<pre><code>setTimeout(() => {
+  console.log("1秒后执行");
+}, 1000);
+</code></pre>
+<p><code>1000</code> 是毫秒，等于 1 秒。</p>
+
+<h3>setInterval：每隔一会儿执行一次</h3>
+<pre><code>const timer = setInterval(() => {
+  console.log("每2秒打印一次");
+}, 2000);
+
+clearInterval(timer); // 想停的时候
+</code></pre>
+
+<div class="box note"><strong>轮询</strong>聊天软件用 <code>setInterval</code> 每隔几秒问服务器“有没有新消息”，叫轮询。你发的 worker.js 里聊天页面就是 5 秒轮询一次。</div>
+
+<h3>localStorage：存东西</h3>
+<p>浏览器的小仓库。关掉页面再打开，东西还在。只能存字符串。</p>
+<pre><code>// 存
+localStorage.setItem("name", "小明");
+
+// 读
+const name = localStorage.getItem("name");
+console.log(name); // "小明"
+
+// 删
+localStorage.removeItem("name");
+
+// 清空全部
+localStorage.clear();
+</code></pre>
+
+<h3>存数组和对象要先转字符串</h3>
+<pre><code>const messages = ["你好", "在吗"];
+
+// 存
+localStorage.setItem("chat", JSON.stringify(messages));
+
+// 读
+const saved = JSON.parse(localStorage.getItem("chat") || "[]");
+console.log(saved); // ["你好", "在吗"]
+</code></pre>
+
+<div class="box tip"><strong>纸上练习</strong>1. 写存名字到 localStorage 的代码。2. 写读出来的代码。3. 写存数组 <code>[1,2,3]</code> 并读回来的代码。</div>
+
+<div class="footer">— 15 —</div>
+</section>
+
+<section class="page">
+<h2>第15章 错误处理</h2>
+<p>代码会出错。出错时如果不处理，页面就白了。用 <code>try/catch</code> 接住错误。</p>
+
+<h3>基本结构</h3>
+<pre><code>try {
+  // 可能出错的代码
+  const data = JSON.parse("不是JSON");
+} catch (err) {
+  // 出错后干什么
+  console.log("出错了：" + err.message);
+} finally {
+  // 不管成功失败都执行（可选）
+  console.log("结束");
+}
+</code></pre>
+
+<div class="box note"><strong>关键</strong><code>try</code> 里放可能出错的代码，<code>catch</code> 里放出错后怎么办。<code>err.message</code> 是错误信息。</div>
+
+<h3>主动抛错</h3>
+<pre><code>if (!res.ok) {
+  throw new Error(`HTTP ${res.status}`);
+}
+</code></pre>
+<p><code>throw</code> 主动抛出一个错误，会被外面的 <code>catch</code> 接住。</p>
+
+<h3>结合 async/await</h3>
+<pre><code>async function getData() {
+  try {
+    const res = await fetch("/api/data");
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    console.log(data);
+  } catch (err) {
+    console.log("请求失败：" + err.message);
+  }
+}
+</code></pre>
+
+<div class="box warn"><strong>不处理的后果</strong>错误不处理，后面的代码不会执行，用户看到白屏。所以关键的 <code>fetch</code>、<code>JSON.parse</code>、<code>await</code> 都要包在 try/catch 里。</div>
+
+<div class="box tip"><strong>纸上练习</strong>1. 写 try/catch 包住 <code>JSON.parse("不是JSON")</code>。2. 写出 catch 打印 <code>err.message</code> 的代码。</div>
+
+<div class="footer">— 16 —</div>
+</section>
+
+<section class="page">
+<h2>第16章 异步</h2>
+<p>有些事要等：等网络、等文件、等用户。JS 不能傻等，它用“异步”。</p>
+
+<h3>同步 vs 异步</h3>
+<pre><code>console.log("1");
+
+setTimeout(() => console.log("2"), 0);
+
+console.log("3");
+
+// 输出顺序：1 3 2
+</code></pre>
+<p>同步代码先跑完，异步的回调等一会儿再跑。这叫事件循环。</p>
+
+<h3>Promise</h3>
+<pre><code>const p = fetch("/api/data");
+
+p.then(res => res.json())
+ .then(data => console.log(data))
+ .catch(err => console.error(err));
+</code></pre>
+<p>Promise 三种状态：<code>pending</code>（进行中）、<code>fulfilled</code>（成功）、<code>rejected</code>（失败）。</p>
+
+<h3>async / await</h3>
+<pre><code>async function getData() {
+  const res = await fetch("/api/data");
+  const data = await res.json();
+  console.log(data);
+}
+</code></pre>
+<p><code>await</code> 就是“等它回来再往下走”。<code>async</code> 表示这个函数里有异步操作。</p>
+
+<div class="box warn"><strong>fetch 的坑</strong><code>fetch</code> 遇到 404 不会自动报错。一定要手动判断 <code>res.ok</code>。</div>
+
+<h3>顺序问题</h3>
+<pre><code>async function run() {
+  console.log("A");
+  await fetch("/api");
+  console.log("B");  // 等 fetch 完才执行
+}
+run();
+console.log("C");  // 先执行，因为 run 是异步的
+// 输出：A C B
+</code></pre>
+
+<div class="box tip"><strong>纸上练习</strong>1. 写出 <code>1 3 2</code> 的输出顺序。2. 用 async/await 写一个函数请求 URL 并打印数据。</div>
+
+<div class="footer">— 17 —</div>
+</section>
+
+<section class="page">
+<h2>第17章 fetch 与离线模拟</h2>
+
+<h3>GET：去拿数据</h3>
+<pre><code>async function getData() {
+  const res = await fetch("https://jsonplaceholder.typicode.com/todos/1");
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  console.log(data);
+}
+getData();
+</code></pre>
+
+<h3>POST：把数据送过去</h3>
+<pre><code>async function sendMsg(text) {
+  const res = await fetch("/api/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      messages: [{ role: "user", content: text }]
+    })
+  });
+  return res.json();
+}
+</code></pre>
+
+<div class="box note"><strong>GET 和 POST 的区别</strong>GET 去拿，数据放在 URL 里；POST 去送，数据放在 body 里。GET 不用写 method，POST 必须写。</div>
+
+<h3>没网怎么练——本地模拟</h3>
+<p>网络不好，就假装有一台服务器。用数组当“服务器返回的数据”。</p>
+<pre><code>// 假装这是服务器返回的数据
+const fakeServerData = [
+  { id: 1, name: "小明", content: "你好" },
+  { id: 2, name: "小红", content: "在吗" }
+];
+
+// 假装这是 fetch 之后的处理
+function fakeFetch() {
+  return new Promise(resolve => {
+    setTimeout(() => resolve(fakeServerData), 500);
+  });
+}
+
+// 用起来和真 fetch 一样
+async function load() {
+  const data = await fakeFetch();
+  console.log(data);
+}
+load();
+</code></pre>
+<p>真 fetch 换成假 fetch，其他逻辑一样。学会了这套，网络好了换成真 fetch 就行。</p>
+
+<h3>状态码只记三个</h3>
+<ul>
+<li><code>200</code> 成功</li>
+<li><code>404</code> 找不到</li>
+<li><code>500</code> 服务器出错</li>
+</ul>
+
+<div class="box tip"><strong>纸上练习</strong>1. 写出 GET 请求的代码。2. 写出 POST 请求的代码。3. 用本地数组模拟一个“返回 3 条消息”的假 fetch。</div>
+
+<div class="footer">— 18 —</div>
+</section>
+
+<section class="page">
+<h2>第18章 CORS</h2>
+<p>CORS 是浏览器的安全机制。你的网页不能随便请求另一个域名的数据，除非对方服务器允许。</p>
+
+<div class="box warn"><strong>报错长这样</strong><code>Access to fetch at '...' has been blocked by CORS policy</code></div>
+
+<h3>为什么会这样</h3>
+<p>浏览器怕你的网页偷偷把数据发给别的网站。所以跨域请求（你的域名 ≠ 请求的域名）默认被拦。</p>
+
+<h3>开发阶段：用 *</h3>
+<pre><code>// Worker 里
+const CORS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type"
+};
+</code></pre>
+<p><code>*</code> 表示“任何网站都能调我”。开发方便，但<strong>不安全</strong>，谁都能刷你的接口。</p>
+
+<h3>生产阶段：白名单</h3>
+<pre><code>const CORS = {
+  "Access-Control-Allow-Origin": "https://你的域名.com",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type"
+};
+</code></pre>
+<p>只允许自己的域名。别人网站调你的接口会被浏览器拦。</p>
+
+<h3>OPTIONS 探路请求</h3>
+<p>跨域请求前，浏览器先发一个 OPTIONS 请求“探路”。服务器要回 CORS 头，浏览器才允许真正的请求。</p>
+<pre><code>if (request.method === "OPTIONS") {
+  return new Response(null, { headers: CORS });
+}
+</code></pre>
+
+<div class="box note"><strong>一句话记住</strong>开发用 <code>*</code>，上线改白名单。上线还用 <code>*</code> 等于门没锁。</div>
+
+<div class="box tip"><strong>纸上练习</strong>把 <code>*</code> 改成 <code>https://chick.cc.cd</code>，写出这行代码。</div>
+
+<div class="footer">— 19 —</div>
+</section>
+
+<section class="page">
+<h2>第19章 模块化</h2>
+<p>代码多了要拆文件。一个文件导出，另一个文件导入。</p>
+
+<h3>导出</h3>
+<pre><code>// math.js
+export function add(a, b) {
+  return a + b;
+}
+
+export const PI = 3.14;
+
+export default function multiply(a, b) {
+  return a * b;
+}
+</code></pre>
+
+<h3>导入</h3>
+<pre><code>// main.js
+import multiply, { add, PI } from "./math.js";
+
+console.log(add(2, 3));       // 5
+console.log(PI);              // 3.14
+console.log(multiply(2, 3));  // 6
+</code></pre>
+<p><code>export default</code> 只能有一个，导入时名字随便起。<code>export</code> 可以有多个，导入时要用 <code>{}</code> 且名字一致。</p>
+
+<div class="box warn"><strong>必须用模块模式</strong>HTML 里要写 <code>&lt;script type="module" src="main.js"&gt;&lt;/script&gt;</code>，不能漏 <code>type="module"</code>。</div>
+
+<div class="box note"><strong>对照你发来的文件</strong>worker.js 结尾的 <code>export default { async fetch(request, env) {...} }</code> 就是模块导出。Cloudflare Workers 用这种格式。</div>
+
+<div class="box tip"><strong>纸上练习</strong>1. 写一个 math.js 导出 <code>add</code>。2. 写一个 main.js 导入并调用它。</div>
+
+<div class="footer">— 20 —</div>
+</section>
+
+<section class="page">
+<h2>第20章 调试</h2>
+<p>调试就是“找出代码哪里错了”。</p>
+
+<h3>Console</h3>
+<p>看 <code>console.log</code> 输出和报错。红字就是错误。</p>
+<ul>
+<li><code>console.log(x)</code> 打印</li>
+<li><code>console.error(x)</code> 红色错误</li>
+<li><code>console.warn(x)</code> 黄色警告</li>
+<li><code>console.table(arr)</code> 表格显示数组</li>
+</ul>
+
+<h3>Network（网络）</h3>
+<p>打开开发者工具，点 Network 标签，刷新页面。所有请求都会列出来。</p>
+<ul>
+<li><strong>红色</strong>：请求失败</li>
+<li><strong>200</strong>：成功</li>
+<li><strong>404</strong>：找不到</li>
+<li><strong>500</strong>：服务器错</li>
+<li>点一个请求，看 <strong>Response</strong> 标签，就是服务器返回的内容</li>
+</ul>
+
+<h3>断点</h3>
+<p>在 Sources 标签找到你的 JS 文件，点行号左边，会出现蓝色标记。刷新页面，代码跑到这里会停。你可以一步一步看变量变化。</p>
+
+<h3>常见错误速查</h3>
+<ul>
+<li><code>xxx is not defined</code>：变量没声明或拼错</li>
+<li><code>Cannot read properties of null</code>：选到的元素是 null，可能 id/class 写错</li>
+<li><code>xxx is not a function</code>：调用的东西不是函数</li>
+<li><code>Unexpected token</code>：语法错，多半是括号、引号、逗号</li>
+<li><code>Failed to fetch</code>：网络问题或 CORS</li>
+</ul>
+
+<div class="box tip"><strong>纸上练习</strong>写出看到 <code>Cannot read properties of null (reading 'append')</code> 时，最可能的原因是什么。</div>
+
+<div class="footer">— 21 —</div>
+</section>
+
+<section class="page">
+<h2>第21章 worker.js 导读</h2>
+<p>下面是你之前发来的 worker.js 的核心结构，重新贴一遍。</p>
+
+<h3>路由</h3>
+<pre><code>var CORS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type"
+};
+
+async function handle(request, env) {
+  var url = new URL(request.url), path = url.pathname;
+
+  if (request.method === "OPTIONS") {
+    return new Response(null, { headers: CORS });
+  }
+
+  if (path === "/messages" && request.method === "GET") {
+    // 拿消息
+  }
+
+  if (path === "/send" && request.method === "POST") {
+    // 发消息
+  }
+
+  return new Response("Not Found", { status: 404 });
+}
+
+export default {
+  async fetch(request, env) {
+    return handle(request, env);
+  }
+};
+</code></pre>
+<p><code>request.url</code> 是完整网址，<code>url.pathname</code> 是路径，<code>request.method</code> 是 GET/POST。</p>
+
+<h3>数据库</h3>
+<pre><code>// 查：id 大于 since 的消息，倒序，最多 limit 条
+var r = await env.DB.prepare(
+  "SELECT id,name,content,type,time FROM messages WHERE id>? ORDER BY id DESC LIMIT ?"
+).bind(since, parseInt(limit)).all();
+// r.results 是数组
+
+// 增：插入一条消息
+await env.DB.prepare(
+  "INSERT INTO messages (name,content,type,time) VALUES (?,?,?,?)"
+).bind(name, content, type, time).run();
+</code></pre>
+
+<div class="box note"><strong>关键</strong><code>prepare</code> 准备 SQL，<code>?</code> 是占位符，<code>bind</code> 填值，<code>all()</code> 拿多条，<code>first()</code> 拿一条，<code>run()</code> 执行增删改。</div>
+
+<div class="box warn"><strong>为什么不直接拼字符串</strong>如果你写 <code>"SELECT * FROM messages WHERE id=" + id</code>，别人输入 <code>1 OR 1=1</code> 就能拖走所有数据。这叫 SQL 注入。<code>?</code> + <code>bind</code> 能防。</div>
+
+<div class="footer">— 22 —</div>
+</section>
+
+<section class="page">
+<h2>第22章 app.js 导读</h2>
+<p>app.js 是一个单页应用。它用几个对象把代码分开了：</p>
+<ul>
+<li><code>State</code>：全局状态（当前用户、页面、token）</li>
+<li><code>Utils</code>：工具函数（toast、格式化、图片压缩、API 请求）</li>
+<li><code>Pages</code>：每个页面返回 HTML 字符串</li>
+<li><code>Router</code>：切换页面</li>
+<li><code>App</code>：业务逻辑（登录、搜索、下载、审核）</li>
+</ul>
+
+<h3>结构</h3>
+<pre><code>const State = {
+  currentUser: null,
+  token: localStorage.getItem('chick_token') || null
+};
+
+const Router = {
+  async go(page, param) {
+    State.currentPage = page;
+    const html = await Pages[page](param);
+    document.getElementById('page-container').innerHTML = html;
+  }
+};
+</code></pre>
+<div class="box note"><strong>关键</strong>所有页面都是 JS 拼出来的 HTML 字符串，用 <code>innerHTML</code> 塞进页面。所以 app.js 里大量 <code>`&lt;div&gt;...&lt;/div&gt;`</code> 模板字符串。</div>
+
+<h3>API 请求</h3>
+<pre><code>async api(path, options = {}) {
+  const opts = {
+    headers: {
+      'Content-Type': 'application/json',
+      ...(State.token ? { 'Authorization': 'Bearer ' + State.token } : {})
+    },
+    ...options
+  };
+  if (options.body && typeof options.body === 'object') {
+    opts.body = JSON.stringify(options.body);
+  }
+  const res = await fetch(API_BASE + path, opts);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || '请求失败');
+  return data;
+}
+</code></pre>
+<div class="box note"><strong>它干了什么</strong>自动加 <code>Content-Type</code> 和 <code>Authorization</code>，自动把对象转 JSON 字符串，自动检查 <code>res.ok</code>，出错抛异常。</div>
+
+<div class="box warn"><strong>安全问题</strong>app.js 里 <code>State.token = user.id</code>，把用户 id 当 token，等于没有认证。别人知道你的 id 就能冒充你。还有管理员密码 <code>chickfor670</code> 硬编码在前端，按 F12 就能看到。这些是真实项目里必须改的。</div>
+
+<div class="footer">— 23 —</div>
+</section>
+
+<section class="page">
+<h2>第23章 安全清单</h2>
+<p>这些是 AI 生成的代码里最常见的坑。读完这本，你要能一眼看出它们。</p>
+
+<h3>1. 密码不能明文存</h3>
+<pre><code>// 错误
+INSERT INTO users (password) VALUES ("123456")
+
+// 正确：存哈希值
+const hash = await bcrypt.hash(password, 10);
+INSERT INTO users (password_hash) VALUES (hash)
+</code></pre>
+
+<h3>2. Token 不能是用户 id</h3>
+<p>用 JWT 或随机字符串，服务端能验证。前端只存 token，不存用户 id 当凭证。</p>
+
+<h3>3. CORS 上线要改白名单</h3>
+<pre><code>// 开发
+"Access-Control-Allow-Origin": "*"
+
+// 上线
+"Access-Control-Allow-Origin": "https://你的域名.com"
+</code></pre>
+
+<h3>4. 输入必须校验</h3>
+<pre><code>const name = (b.name || "匿名").substring(0, 20);
+const content = (b.content || "").substring(0, 500);
+</code></pre>
+
+<h3>5. 用 textContent 不用 innerHTML</h3>
+<p>显示用户输入，永远用 <code>textContent</code>。用 <code>innerHTML</code> 会被 XSS。</p>
+
+<h3>6. SQL 用 ? 不用拼接</h3>
+<pre><code>// 正确
+env.DB.prepare("SELECT * FROM users WHERE id=?").bind(id)
+
+// 错误
+"SELECT * FROM users WHERE id=" + id
+</code></pre>
+
+<h3>7. 分页 + 限流</h3>
+<p>不要一次拉全部数据。加 <code>LIMIT</code>，加频率限制，防止刷接口。</p>
+
+<h3>8. 管理员密码不能在前端</h3>
+<p>app.js 里 <code>if (pwd === 'chickfor670')</code> 这种写法，按 F12 就能看到。管理员验证必须在后端。</p>
+
+<div class="box warn"><strong>记住</strong>AI 写的代码默认能跑，但默认不安全。上线前对照这张清单过一遍。</div>
+
+<div class="footer">— 24 —</div>
+</section>
+
+<section class="page">
+<h2>第24章 下一步</h2>
+<p>你已经看完了这本小册子。现在你能：</p>
+<ul>
+<li>读懂 JS 基础语法、闭包、this、模块化</li>
+<li>看懂 DOM 操作和事件</li>
+<li>理解异步、fetch、CORS</li>
+<li>能看懂 worker.js 和 app.js</li>
+<li>知道 Cloudflare Workers 和 D1 怎么用</li>
+<li>知道密码哈希、JWT、CORS 白名单、SQL 注入、限流</li>
+<li>会用 Console 和 Network 调试</li>
+</ul>
+
+<h3>接下来补这些</h3>
+<ol>
+<li><strong>Git</strong>：版本控制，代码不会丢</li>
+<li><strong>npm</strong>：包管理，装别人写的库</li>
+<li><strong>构建工具</strong>：Vite，打包代码</li>
+<li><strong>框架</strong>：Vue 或 React</li>
+<li><strong>TypeScript</strong>：给 JS 加类型</li>
+<li><strong>测试</strong>：单元测试、集成测试</li>
+</ol>
+
+<div class="box tip"><strong>最后一句</strong>学完这本，你已经能看懂 AI 写的代码、能发现安全问题、能小改。接下来就是多读、多改、多写。你发的那两个文件里，管理员密码硬编码、token 就是用户 id、CORS 写 <code>*</code>，等你学了认证和部署，回头改它们，你就真的会了。</div>
+
+<div class="footer">— 25 —</div>
+</section>
+
+<section class="page">
+<h2>附录A 术语表</h2>
+<table style="width:100%;border-collapse:collapse;font-size:11px">
+<tr style="background:#f6f8fa"><th style="padding:4px;border:1px solid #ddd;text-align:left">词</th><th style="padding:4px;border:1px solid #ddd;text-align:left">意思</th></tr>
+<tr><td style="padding:4px;border:1px solid #ddd">变量</td><td style="padding:4px;border:1px solid #ddd">存数据的盒子</td></tr>
+<tr><td style="padding:4px;border:1px solid #ddd">函数</td><td style="padding:4px;border:1px solid #ddd">一段有名字的代码</td></tr>
+<tr><td style="padding:4px;border:1px solid #ddd">参数</td><td style="padding:4px;border:1px solid #ddd">函数接收的输入</td></tr>
+<tr><td style="padding:4px;border:1px solid #ddd">返回值</td><td style="padding:4px;border:1px solid #ddd">函数给回的结果</td></tr>
+<tr><td style="padding:4px;border:1px solid #ddd">闭包</td><td style="padding:4px;border:1px solid #ddd">函数记住外部变量</td></tr>
+<tr><td style="padding:4px;border:1px solid #ddd">DOM</td><td style="padding:4px;border:1px solid #ddd">浏览器把 HTML 变成的对象树</td></tr>
+<tr><td style="padding:4px;border:1px solid #ddd">事件</td><td style="padding:4px;border:1px solid #ddd">用户做了什么</td></tr>
+<tr><td style="padding:4px;border:1px solid #ddd">回调</td><td style="padding:4px;border:1px solid #ddd">事件发生时执行的函数</td></tr>
+<tr><td style="padding:4px;border:1px solid #ddd">异步</td><td style="padding:4px;border:1px solid #ddd">不等结果先往下走</td></tr>
+<tr><td style="padding:4px;border:1px solid #ddd">Promise</td><td style="padding:4px;border:1px solid #ddd">表示未来会有结果</td></tr>
+<tr><td style="padding:4px;border:1px solid #ddd">fetch</td><td style="padding:4px;border:1px solid #ddd">发网络请求</td></tr>
+<tr><td style="padding:4px;border:1px solid #ddd">API</td><td style="padding:4px;border:1px solid #ddd">别人提供的接口</td></tr>
+<tr><td style="padding:4px;border:1px solid #ddd">JSON</td><td style="padding:4px;border:1px solid #ddd">数据交换格式</td></tr>
+<tr><td style="padding:4px;border:1px solid #ddd">CORS</td><td style="padding:4px;border:1px solid #ddd">跨域安全机制</td></tr>
+<tr><td style="padding:4px;border:1px solid #ddd">XSS</td><td style="padding:4px;border:1px solid #ddd">注入恶意脚本</td></tr>
+<tr><td style="padding:4px;border:1px solid #ddd">SQL 注入</td><td style="padding:4px;border:1px solid #ddd">拼接 SQL 拖数据</td></tr>
+<tr><td style="padding:4px;border:1px solid #ddd">token</td><td style="padding:4px;border:1px solid #ddd">身份凭证</td></tr>
+<tr><td style="padding:4px;border:1px solid #ddd">JWT</td><td style="padding:4px;border:1px solid #ddd">一种 token 格式</td></tr>
+<tr><td style="padding:4px;border:1px solid #ddd">Worker</td><td style="padding:4px;border:1px solid #ddd">Cloudflare 的无服务器函数</td></tr>
+<tr><td style="padding:4px;border:1px solid #ddd">D1</td><td style="padding:4px;border:1px solid #ddd">Cloudflare 的数据库</td></tr>
+</table>
+<div class="footer">— 26 —</div>
+</section>
+
+<section class="page">
+<h2>附录B 练习答案</h2>
+
+<h3>第1章</h3>
+<pre><code>console.log("小明");
+console.log(13);
+console.log("面条");
+
+console.log(100 * 100);  // 10000
+
+// 加 // 后不打印
+</code></pre>
+
+<h3>第2章</h3>
+<pre><code>const age = 18;
+age = 19;  // TypeError: Assignment to constant variable
+</code></pre>
+
+<h3>第3章</h3>
+<pre><code>typeof "abc"   // "string"
+typeof 123     // "number"
+typeof true    // "boolean"
+typeof null    // "object"
+
+const name = "小明", age = 13;
+console.log(`我叫 ${name}，今年 ${age} 岁`);
+</code></pre>
+
+<h3>第4章</h3>
+<pre><code>1 === "1"   // false
+1 == "1"    // true
+
+const age = 18;
+if (age >= 18) console.log("成年");
+else console.log("未成年");
+
+console.log(age >= 18 ? "成年" : "未成年");
+</code></pre>
+
+<h3>第5章</h3>
+<pre><code>for (let i = 1; i <= 10; i++) console.log(i);
+
+[1,2,3,4,5].forEach(n => console.log(n * 2));
+
+let i = 10;
+while (i >= 1) { console.log(i); i--; }
+</code></pre>
+
+<h3>第6章</h3>
+<pre><code>function double(n) { return n * 2; }
+const double = n => n * 2;
+
+function max(a, b) { return a > b ? a : b; }
+</code></pre>
+
+<h3>第7章</h3>
+<pre><code>function adder(n) {
+  return x => x + n;
+}
+const add5 = adder(5);
+console.log(add5(3));  // 8
+
+const obj = {
+  name: "A",
+  hello() { console.log(this.name); }
+};
+obj.hello();  // "A"
+</code></pre>
+
+<h3>第8章</h3>
+<pre><code>[1,2,3,4,5].filter(n => n > 3);     // [4,5]
+[1,2,3,4,5].map(n => n * n);        // [1,4,9,16,25]
+[1,2,3,4,5].reduce((s,n) => s + n, 0); // 15
+</code></pre>
+
+<h3>第9章</h3>
+<pre><code>const me = { name: "小明", age: 13, food: "面条" };
+const { name } = me;
+const copy = { ...me, city: "北京" };
+</code></pre>
+
+<h3>第10章</h3>
+<pre><code>const s = JSON.stringify({a:1, b:2});
+// '{"a":1,"b":2}'
+console.log(JSON.parse(s).a);  // 1
+</code></pre>
+
+<h3>第12章</h3>
+<pre><code>const box = document.querySelector("#box");
+box.textContent = "你好";
+
+const p = document.createElement("p");
+p.textContent = "新段落";
+document.body.append(p);
+</code></pre>
+
+<h3>第13章</h3>
+<pre><code>btn.addEventListener("click", () => console.log("你好"));
+
+input.addEventListener("keydown", e => {
+  if (e.key === "Enter") console.log(input.value);
+});
+
+ul.addEventListener("click", e => {
+  if (e.target.tagName === "LI") {
+    e.target.classList.toggle("done");
+  }
+});
+</code></pre>
+
+<h3>第14章</h3>
+<pre><code>localStorage.setItem("name", "小明");
+console.log(localStorage.getItem("name"));
+
+localStorage.setItem("nums", JSON.stringify([1,2,3]));
+const nums = JSON.parse(localStorage.getItem("nums"));
+console.log(nums);  // [1,2,3]
+</code></pre>
+
+<h3>第15章</h3>
+<pre><code>try {
+  JSON.parse("不是JSON");
+} catch (err) {
+  console.log("出错了：" + err.message);
+}
+</code></pre>
+
+<h3>第16章</h3>
+<pre><code>// 输出：1 3 2
+
+async function f() {
+  const res = await fetch("https://jsonplaceholder.typicode.com/todos/1");
+  const data = await res.json();
+  console.log(data);
+}
+f();
+</code></pre>
+
+<h3>第17章</h3>
+<pre><code>async function getData() {
+  const res = await fetch("https://jsonplaceholder.typicode.com/todos/1");
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+async function sendMsg(text) {
+  const res = await fetch("/api/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ messages: [{ role: "user", content: text }] })
+  });
+  return res.json();
+}
+
+const fake = [
+  { id: 1, content: "你好" },
+  { id: 2, content: "在吗" },
+  { id: 3, content: "在的" }
+];
+</code></pre>
+
+<h3>第18章</h3>
+<pre><code>"Access-Control-Allow-Origin": "https://chick.cc.cd"
+</code></pre>
+
+<h3>第19章</h3>
+<pre><code>// math.js
+export function add(a, b) { return a + b; }
+
+// main.js
+import { add } from "./math.js";
+console.log(add(2, 3));
+</code></pre>
+
+<h3>第20章</h3>
+<p>最常见原因：<code>document.querySelector("#chat2")</code> 里的 id 写错，页面上没有 <code>#chat2</code>，返回 <code>null</code>，后面 <code>null.append()</code> 就炸了。</p>
+
+<div class="footer">— 27 —</div>
+</section>
+
+</body>
+</html>
