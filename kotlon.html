@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kotlin 第一章 · 全题型闯关</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: #0d1117; color: #c9d1d9; line-height: 1.7; padding: 20px;
+  }
+  .container { max-width: 920px; margin: 0 auto; }
+  header { border-bottom: 2px solid #30363d; padding-bottom: 16px; margin-bottom: 28px; }
+  header h1 { color: #58a6ff; font-size: 24px; margin-bottom: 6px; }
+  header p { color: #8b949e; font-size: 13px; }
+  .tag {
+    display: inline-block; background: #1f6feb22; color: #58a6ff;
+    border: 1px solid #1f6feb55; border-radius: 20px; padding: 2px 12px;
+    font-size: 12px; margin-right: 6px; margin-top: 8px;
+  }
+
+  .progress-bar { display: flex; gap: 6px; margin-bottom: 24px; flex-wrap: wrap; }
+  .progress-bar .dot {
+    width: 10px; height: 10px; border-radius: 50%; background: #30363d; transition: background .3s;
+  }
+  .progress-bar .dot.pass { background: #3fb950; }
+  .progress-bar .dot.partial { background: #d29922; }
+
+  .section-title {
+    color: #f0883e; font-size: 19px; border-left: 4px solid #f0883e;
+    padding-left: 12px; margin: 32px 0 16px 0;
+  }
+
+  .question {
+    background: #161b22; border: 1px solid #30363d; border-radius: 10px;
+    padding: 20px 22px; margin-bottom: 18px; position: relative;
+  }
+  .question .q-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+  .question .q-title { color: #e6edf3; font-size: 15.5px; font-weight: 600; flex: 1; }
+  .question .score-tag {
+    background: #1f6feb22; color: #58a6ff; border: 1px solid #1f6feb55;
+    border-radius: 12px; padding: 1px 10px; font-size: 12px; white-space: nowrap; margin-left: 10px;
+  }
+  .question .q-desc { font-size: 14px; color: #8b949e; margin-bottom: 12px; }
+  .question .q-desc code, .expected-box code {
+    background: #0d1117; padding: 2px 6px; border-radius: 4px;
+    color: #79c0ff; font-family: Consolas, monospace; font-size: 13px;
+  }
+
+  /* 选择题 */
+  .option {
+    display: block; padding: 10px 14px; margin: 6px 0; border: 1px solid #30363d;
+    border-radius: 6px; cursor: pointer; transition: all .15s; font-size: 14px;
+    background: #0d1117;
+  }
+  .option:hover { border-color: #58a6ff; background: #161b22; }
+  .option.selected { border-color: #58a6ff; background: #1c2733; }
+  .option.correct { border-color: #3fb950; background: #0f2818; }
+  .option.wrong { border-color: #f85149; background: #2d1418; }
+  .option input { margin-right: 10px; accent-color: #58a6ff; }
+
+  /* 填空/简答 */
+  .fill-input {
+    width: 100%; background: #0d1117; color: #c9d1d9; border: 1px solid #30363d;
+    border-radius: 6px; padding: 10px 12px; font-family: Consolas, monospace;
+    font-size: 14px; margin-top: 6px;
+  }
+  .fill-input:focus { outline: none; border-color: #58a6ff; }
+  .fill-input.correct { border-color: #3fb950; background: #0f2818; }
+  .fill-input.wrong { border-color: #f85149; background: #2d1418; }
+
+  .subj-textarea {
+    width: 100%; min-height: 80px; background: #0d1117; color: #c9d1d9;
+    border: 1px solid #30363d; border-radius: 6px; padding: 10px 12px;
+    font-family: inherit; font-size: 14px; resize: vertical;
+  }
+  .subj-textarea:focus { outline: none; border-color: #58a6ff; }
+
+  /* 编程题 */
+  .editor-wrap { border: 1px solid #30363d; border-radius: 8px; overflow: hidden; margin-bottom: 12px; }
+  .editor { width: 100%; height: 190px; }
+  .expected-box {
+    background: #0d1117; border: 1px dashed #30363d; border-radius: 6px;
+    padding: 10px 14px; font-family: Consolas, monospace; font-size: 13px;
+    color: #8b949e; margin-bottom: 12px; white-space: pre-wrap;
+  }
+  .expected-box .lbl {
+    color: #3fb950; font-weight: 600; font-size: 12px; display: block;
+    margin-bottom: 4px; font-family: -apple-system, sans-serif;
+  }
+
+  .action-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+  .btn {
+    display: inline-block; padding: 8px 18px; border: none; border-radius: 6px;
+    cursor: pointer; font-size: 14px; font-family: inherit; font-weight: 500;
+    transition: background .15s;
+  }
+  .btn.primary { background: #238636; color: #fff; }
+  .btn.primary:hover { background: #2ea043; }
+  .btn.secondary { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; }
+  .btn.secondary:hover { background: #30363d; }
+  .btn.blue { background: #1f6feb; color: #fff; }
+  .btn.blue:hover { background: #388bfd; }
+
+  .output-box {
+    background: #0d1117; border: 1px solid #30363d; border-radius: 6px;
+    padding: 12px 14px; font-family: Consolas, monospace; font-size: 13px;
+    white-space: pre-wrap; min-height: 42px; margin-bottom: 10px;
+  }
+  .output-box .lbl {
+    color: #8b949e; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 1px; display: block; margin-bottom: 5px;
+    font-family: -apple-system, sans-serif;
+  }
+  .output-box .val { color: #79c0ff; }
+  .output-box .err { color: #f85149; }
+  .output-box .empty { color: #484f58; font-style: italic; }
+
+  .verdict {
+    padding: 12px 16px; border-radius: 6px; font-size: 13.5px;
+    display: none; line-height: 1.6;
+  }
+  .verdict.pass { background: #0f2818; color: #3fb950; display: block; border: 1px solid #23863655; }
+  .verdict.fail { background: #2d1418; color: #f85149; display: block; border: 1px solid #f8514955; }
+  .verdict.info { background: #1c2733; color: #a5d6ff; display: block; border: 1px solid #1f6feb55; }
+  .verdict code {
+    background: #0d1117; padding: 1px 5px; border-radius: 3px;
+    font-family: Consolas, monospace; font-size: 12.5px;
+  }
+
+  .hint-toggle {
+    margin-top: 10px; font-size: 13px; color: #58a6ff; cursor: pointer;
+    user-select: none; display: inline-block;
+  }
+  .hint-toggle:hover { text-decoration: underline; }
+  .hint-box {
+    margin-top: 8px; padding: 10px 14px; background: #0d1a2d;
+    border-left: 3px solid #58a6ff; border-radius: 4px; font-size: 13px;
+    color: #a5d6ff; display: none;
+  }
+  .hint-box.show { display: block; }
+
+  .ref-box {
+    margin-top: 10px; padding: 10px 14px; background: #0d1a2d;
+    border-left: 3px solid #58a6ff; border-radius: 4px; font-size: 13px;
+    color: #a5d6ff; display: none;
+  }
+  .ref-box.show { display: block; }
+  .ref-box strong { color: #58a6ff; }
+
+  .export-bar {
+    position: sticky; bottom: 0; background: #0d1117ee; backdrop-filter: blur(8px);
+    border-top: 1px solid #30363d; padding: 14px 0; margin-top: 32px;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 10px; z-index: 100;
+  }
+  .score-display { font-size: 15px; color: #e6edf3; }
+  .score-display .num { color: #3fb950; font-weight: 700; font-size: 20px; }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: #0d1117; }
+  ::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>Kotlin 第一章 · 全题型闯关</h1>
+    <p>范围：<code style="color:#79c0ff;">fun main()</code>、<code style="color:#79c0ff;">println</code>、<code style="color:#79c0ff;">print</code>、注释、中英文标点、大小写敏感。只考第一章。</p>
+    <div>
+      <span class="tag">选择</span>
+      <span class="tag">填空</span>
+      <span class="tag">简答</span>
+      <span class="tag">编程</span>
+      <span class="tag">导出 JSON</span>
+    </div>
+  </header>
+
+  <div class="progress-bar" id="progress"></div>
+
+  <div id="questionArea"></div>
+
+  <div class="export-bar">
+    <div class="score-display">当前得分：<span class="num" id="scoreNum">0</span> / <span id="totalNum">0</span></div>
+    <button class="btn blue" onclick="exportJSON()">⬇ 导出我的答案（JSON）</button>
+  </div>
+
+</div>
+
+<!-- Monaco Editor -->
+<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
+
+<script>
+/* ============================================================
+   题库定义
+   ============================================================ */
+const QUESTIONS = [
+
+  /* ---------- 选择题（每题4分，共5题） ---------- */
+  {
+    id: "ch1", type: "choice", score: 4,
+    title: "1. Kotlin 程序的入口函数（程序从哪里开始执行）是哪一个？",
+    options: ["start()", "main()", "run()", "begin()"],
+    correct: 1,
+    explain: "main 是程序的入口，电脑运行程序时第一个找的就是它。"
+  },
+  {
+    id: "ch2", type: "choice", score: 4,
+    title: "2. println 和 print 的区别是什么？",
+    options: [
+      "没有区别，只是拼写不同",
+      "println 打印后自动换行，print 不换行",
+      "print 打印后自动换行，println 不换行",
+      "println 只能打印数字，print 只能打印文字"
+    ],
+    correct: 1,
+    explain: "差别就一个换行符：println 打完自动跳到下一行，print 打完停在原地。"
+  },
+  {
+    id: "ch3", type: "choice", score: 4,
+    title: "3. Kotlin 中多行注释使用哪一组符号？",
+    options: ["// ... //", "# ... #", "/* ... */", "<!-- ... -->"],
+    correct: 2,
+    explain: "/* 开始、*/ 结束是多行注释；// 是单行注释。"
+  },
+  {
+    id: "ch4", type: "choice", score: 4,
+    title: "4. 下面哪段代码能正确打印 Hello？",
+    options: [
+      'fun main() { println("Hello") }',
+      'fun main { println("Hello") }',
+      'Fun main() { println("Hello") }',
+      'main() { println("Hello") }'
+    ],
+    correct: 0,
+    explain: "fun 小写；main 后面必须有一对圆括号 ()。Fun（大写）和漏掉 () 都报错。"
+  },
+  {
+    id: "ch5", type: "choice", score: 4,
+    title: "5. 关于 Kotlin 的多行注释，下面说法正确的是？",
+    options: ["不能嵌套", "可以嵌套", "必须写在文件第一行", "只能注释一行"],
+    correct: 1,
+    explain: "Kotlin 的多行注释可以嵌套：/* 外层 /* 内层 */ 还在注释里 */。"
+  },
+
+  /* ---------- 填空题（每题5分，共3题） ---------- */
+  {
+    id: "fi1", type: "fill", score: 5,
+    title: "1. 定义函数的关键字是 ____（三个字母）。",
+    placeholder: "输入关键字",
+    answer: "fun",
+    explain: "fun 是 function 的缩写，用来声明一个函数。"
+  },
+  {
+    id: "fi2", type: "fill", score: 5,
+    title: "2. 打印一行并自动换行，用 ____ 函数（填函数名）。",
+    placeholder: "输入函数名",
+    answer: "println",
+    explain: "println 打印完自动换行；print 不换行。"
+  },
+  {
+    id: "fi3", type: "fill", score: 5,
+    title: "3. 单行注释以 ____ 开头（填两个符号）。",
+    placeholder: "输入两个符号",
+    answer: "//",
+    explain: "// 从它开始到行尾都不执行；多行注释用 /* ... */。"
+  },
+
+  /* ---------- 简答题（每题6分，共2题） ---------- */
+  {
+    id: "su1", type: "subj", score: 6,
+    title: "1. 用自己的话说说 fun、main、println 各是什么意思，它们分别在程序里起什么作用。",
+    reference: "<strong>fun</strong> 是 function 的缩写，意思是“我下面要定义一个函数”，可以理解成一个“动作包”。<br><strong>main</strong> 是程序的入口——电脑运行程序时，第一个找的就是这个名字的函数，从它里面开始执行。<br><strong>println</strong> 的意思是“打印一行”，把引号里的内容显示到屏幕上，并且打印完自动换行。"
+  },
+  {
+    id: "su2", type: "subj", score: 6,
+    title: "2. print 和 println 有什么区别？分别在什么场景下更合适？",
+    reference: "区别只在于<strong>打完是否换行</strong>：<br>· <strong>println</strong>：打印完自动跳到下一行。<br>· <strong>print</strong>：打印完停在原地，下一个输出会紧跟在后面。<br>场景：需要对齐输出、或者想让多个内容拼在同一行时用 print；普通一行一行输出时用 println 更省心。"
+  },
+
+  /* ---------- 编程题（每题10分，共5题） ---------- */
+  {
+    id: "co1", type: "code", score: 10,
+    title: "1. Hello World + 双注释",
+    desc: '用 <code>println</code> 输出 <code>Hello, Kotlin!</code>；代码中必须同时包含单行注释 <code>//</code> 和多行注释 <code>/* ... */</code>。',
+    expected: "Hello, Kotlin!",
+    initial: `fun main() {
+    // 在这里写单行注释
+    /* 在这里写多行注释 */
+    // 然后输出 Hello, Kotlin!
+}`,
+    hint: 'println("Hello, Kotlin!")；注释是给人看的，电脑会忽略。',
+    checks: [
+      { type: "singleComment", msg: "缺少单行注释 //" },
+      { type: "multiComment", msg: "缺少多行注释 /* ... */" }
+    ]
+  },
+  {
+    id: "co2", type: "code", score: 10,
+    title: "2. 打印三行",
+    desc: "用 <code>println</code> 打印三行，依次是：<code>Kotlin</code>、<code>2026-10-10</code>、<code>我要学会Kotlin</code>。",
+    expected: "Kotlin\n2026-10-10\n我要学会Kotlin",
+    initial: `fun main() {
+    // 写三次 println
+}`,
+    hint: "每次 println 一个字符串，注意引号是英文的。",
+    checks: []
+  },
+  {
+    id: "co3", type: "code", score: 10,
+    title: "3. print 与 println 组合",
+    desc: '让程序输出两行：第一行是 <code>AB</code>（A 和 B 紧挨着），第二行是 <code>CD</code>。',
+    expected: "AB\nCD",
+    initial: `fun main() {
+    // print("A"); print("B") 会输出 AB 不换行
+    // 然后再 println 输出 CD
+}`,
+    hint: 'print("A") 和 print("B") 都不换行，所以紧挨着；最后用 println("CD") 换行输出。',
+    checks: [
+      { type: "mustUsePrint", arg: "A", msg: '第一行要用 print("A") 拼出 AB，不能两次 println。' },
+      { type: "mustUsePrint", arg: "B", msg: '第一行要用 print("B") 拼出 AB，不能两次 println。' }
+    ]
+  },
+  {
+    id: "co4", type: "code", score: 10,
+    title: "4. 古诗 + 多行注释嵌套",
+    desc: '用 <code>println</code> 输出两行：<code>床前明月光</code>、<code>疑是地上霜</code>；同时代码中必须包含一个<strong>嵌套的多行注释</strong>（即 <code>/* 外层 /* 内层 */ 还在注释里 */</code>）。',
+    expected: "床前明月光\n疑是地上霜",
+    initial: `fun main() {
+    /* 外层注释开始
+       /* 内层注释 */
+       还在外层里
+    */
+    // 你的代码
+}`,
+    hint: "两次 println，一句诗一行；嵌套多行注释是 Kotlin 的特色。",
+    checks: [
+      { type: "nestedComment", msg: "缺少嵌套的多行注释（/* 外层 /* 内层 */ 还在 */）" }
+    ]
+  },
+  {
+    id: "co5", type: "code", score: 10,
+    title: "5. 避开中文标点 + 大小写敏感",
+    desc: '输出 <code>Kotlin</code>。代码中所有符号必须用英文半角（引号、括号），且 <code>println</code>、<code>fun</code>、<code>main</code> 都必须全小写。',
+    expected: "Kotlin",
+    initial: `fun main() {
+    // 写 println("Kotlin")
+}`,
+    hint: '必须用英文双引号 " 和英文圆括号 ()；println、fun、main 都要小写。',
+    checks: [
+      { type: "noChinesePunct", msg: "代码中出现了中文标点（引号、括号等），Kotlin 只认英文半角。" },
+      { type: "allLower", msg: "fun、main、println 必须全小写。" }
+    ]
+  }
+];
+
+/* ============================================================
+   状态存储
+   ============================================================ */
+const state = {};
+QUESTIONS.forEach(q => {
+  state[q.id] = { answered: false, correct: false, score: 0, data: null };
+});
+
+/* ============================================================
+   迷你 Kotlin 执行器（只支持第一章：println / print / 注释）
+   ============================================================ */
+function removeComments(code) {
+  let result = "";
+  let i = 0;
+  let depth = 0;
+  while (i < code.length) {
+    if (depth > 0) {
+      if (code[i] === "/" && code[i + 1] === "*") { depth++; i += 2; }
+      else if (code[i] === "*" && code[i + 1] === "/") { depth--; i += 2; }
+      else i++;
+    } else {
+      if (code[i] === "/" && code[i + 1] === "*") { depth++; i += 2; }
+      else if (code[i] === "/" && code[i + 1] === "/") {
+        while (i < code.length && code[i] !== "\n") i++;
+      } else { result += code[i]; i++; }
+    }
+  }
+  return result;
+}
+
+function hasNestedComment(code) {
+  // 粗略检测：/* ... /* ... */ ... */
+  const regex = /\/\*[^*]*\/\*[\s\S]*?\*\/[^*]*\*\//;
+  return regex.test(code);
+}
+
+function executeKotlin(code) {
+  const errors = [];
+  if (/[“”]/.test(code)) errors.push('代码中出现了中文引号“ ”，Kotlin 必须使用英文半角引号 "');
+  if (/[（）]/.test(code)) errors.push("代码中出现了中文括号（），Kotlin 必须使用英文半角括号 ()");
+  if (!/fun\s+main\s*\(\s*\)/.test(code)) {
+    errors.push("找不到 fun main()，程序没有入口");
+  }
+
+  let cleaned = removeComments(code);
+  let output = "";
+  const funcRegex = /\b(println|print)\s*\(/g;
+  let match;
+  while ((match = funcRegex.exec(cleaned)) !== null) {
+    const funcName = match[1];
+    let parenStart = match.index + match[0].length;
+    let depth = 1;
+    let j = parenStart;
+    let inString = false;
+    while (j < cleaned.length && depth > 0) {
+      const c = cleaned[j];
+      if (inString) {
+        if (c === "\\") { j += 2; continue; }
+        if (c === '"') inString = false;
+      } else {
+        if (c === '"') inString = true;
+        else if (c === "(") depth++;
+        else if (c === ")") depth--;
+      }
+      j++;
+    }
+    const args = cleaned.substring(parenStart, j - 1).trim();
+    if (args === "") {
+      if (funcName === "println") output += "\n";
+    } else if (args.startsWith('"') && args.endsWith('"')) {
+      let content = args.slice(1, -1);
+      content = content.replace(/\\n/g, "\n").replace(/\\t/g, "\t").replace(/\\"/g, '"').replace(/\\\\/g, "\\");
+      output += content;
+      if (funcName === "println") output += "\n";
+    } else {
+      errors.push(`"${args}" 不是第一章能处理的表达式（第一章只支持打印字符串字面量）`);
+    }
+    funcRegex.lastIndex = j;
+  }
+  return { output, errors };
+}
+
+/* ============================================================
+   渲染题目
+   ============================================================ */
+function renderAll() {
+  const area = document.getElementById("questionArea");
+  area.innerHTML = "";
+
+  // 分组
+  const groups = [
+    { type: "choice", label: "一、选择题（每题 4 分，共 20 分）" },
+    { type: "fill", label: "二、填空题（每题 5 分，共 15 分）" },
+    { type: "subj", label: "三、简答题（每题 6 分，共 12 分）" },
+    { type: "code", label: "四、编程题（每题 10 分，共 50 分）" }
+  ];
+
+  groups.forEach(g => {
+    const qs = QUESTIONS.filter(q => q.type === g.type);
+    if (qs.length === 0) return;
+
+    const title = document.createElement("div");
+    title.className = "section-title";
+    title.textContent = g.label;
+    area.appendChild(title);
+
+    qs.forEach(q => {
+      const div = document.createElement("div");
+      div.className = "question";
+      div.id = "q-" + q.id;
+
+      let html = `<div class="q-head">
+        <div class="q-title">${q.title}</div>
+        <div class="score-tag">${q.score} 分</div>
+      </div>`;
+
+      if (q.type === "choice") {
+        q.options.forEach((opt, i) => {
+          html += `<label class="option" data-qid="${q.id}" data-idx="${i}">
+            <input type="radio" name="${q.id}" value="${i}"> ${String.fromCharCode(65 + i)}. ${opt}
+          </label>`;
+        });
+        html += `<div class="verdict" id="vd-${q.id}"></div>`;
+      } else if (q.type === "fill") {
+        html += `<input class="fill-input" id="fill-${q.id}" placeholder="${q.placeholder || '输入答案'}">`;
+        html += `<div class="verdict" id="vd-${q.id}"></div>`;
+      } else if (q.type === "subj") {
+        html += `<textarea class="subj-textarea" id="subj-${q.id}" placeholder="在这里写下你的答案……"></textarea>`;
+        html += `<button class="btn secondary" onclick="toggleRef('${q.id}')">对照参考答案</button>`;
+        html += `<div class="ref-box" id="ref-${q.id}">${q.reference}</div>`;
+        html += `<div class="verdict" id="vd-${q.id}" style="display:none;"></div>`;
+      } else if (q.type === "code") {
+        html += `<div class="expected-box"><span class="lbl">期望输出：</span>${q.expected}</div>`;
+        html += `<div class="editor-wrap"><div class="editor" id="editor-${q.id}"></div></div>`;
+        html += `<div class="action-row">
+          <button class="btn primary" onclick="runCode('${q.id}')">▶ 运行并判定</button>
+          <button class="btn secondary" onclick="resetCode('${q.id}')">重置代码</button>
+        </div>`;
+        html += `<div class="output-box" id="out-${q.id}" style="display:none;">
+          <span class="lbl">实际输出</span><span class="val" id="out-val-${q.id}"></span>
+        </div>`;
+        html += `<div class="verdict" id="vd-${q.id}"></div>`;
+        html += `<span class="hint-toggle" onclick="toggleHint('${q.id}')">💡 提示</span>`;
+        html += `<div class="hint-box" id="hint-${q.id}">${q.hint}</div>`;
+      }
+
+      div.innerHTML = html;
+      area.appendChild(div);
+    });
+  });
+
+  // 选择题事件
+  document.querySelectorAll(".option").forEach(el => {
+    el.addEventListener("click", function () {
+      const qid = this.dataset.qid;
+      const idx = +this.dataset.idx;
+      const q = QUESTIONS.find(x => x.id === qid);
+
+      document.querySelectorAll(`.option[data-qid="${qid}"]`).forEach(o => {
+        o.classList.remove("selected", "correct", "wrong");
+      });
+      this.classList.add("selected");
+
+      const isCorrect = idx === q.correct;
+      const fb = document.getElementById("vd-" + qid);
+      if (isCorrect) {
+        this.classList.add("correct");
+        fb.className = "verdict pass";
+        fb.textContent = "✓ 正确。" + q.explain;
+      } else {
+        this.classList.add("wrong");
+        document.querySelectorAll(`.option[data-qid="${qid}"]`).forEach(o => {
+          if (+o.dataset.idx === q.correct) o.classList.add("correct");
+        });
+        fb.className = "verdict fail";
+        fb.textContent = "✗ 不对。" + q.explain;
+      }
+
+      state[qid].answered = true;
+      state[qid].correct = isCorrect;
+      state[qid].score = isCorrect ? q.score : 0;
+      state[qid].data = { selected: idx, selectedText: q.options[idx] };
+      updateProgress();
+    });
+  });
+
+  // 填空题事件
+  document.querySelectorAll(".fill-input").forEach(el => {
+    el.addEventListener("blur", function () {
+      const qid = this.id.replace("fill-", "");
+      const q = QUESTIONS.find(x => x.id === qid);
+      const val = this.value.trim();
+      if (val === "") return;
+
+      const isCorrect = val.toLowerCase() === q.answer.toLowerCase();
+      this.classList.remove("correct", "wrong");
+      this.classList.add(isCorrect ? "correct" : "wrong");
+
+      const fb = document.getElementById("vd-" + qid);
+      fb.className = "verdict " + (isCorrect ? "pass" : "fail");
+      fb.textContent = isCorrect ? "✓ 正确。" + q.explain : "✗ 不对。正确答案是 " + q.answer + "。" + q.explain;
+
+      state[qid].answered = true;
+      state[qid].correct = isCorrect;
+      state[qid].score = isCorrect ? q.score : 0;
+      state[qid].data = { answer: val };
+      updateProgress();
+    });
+  });
+
+  // 简答题事件
+  document.querySelectorAll(".subj-textarea").forEach(el => {
+    el.addEventListener("blur", function () {
+      const qid = this.id.replace("subj-", "");
+      const val = this.value.trim();
+      if (val === "") return;
+      state[qid].answered = true;
+      state[qid].data = { answer: val };
+      // 简答题自评：默认给 0，用户可以手动勾选
+      const fb = document.getElementById("vd-" + qid);
+      fb.style.display = "block";
+      fb.className = "verdict info";
+      fb.innerHTML = '答完了？对照参考答案，如果觉得自己答对了，点这里自评：' +
+        `<button class="btn primary" style="margin-left:8px;padding:4px 12px;font-size:12px;" onclick="selfGrade('${qid}',true)">✓ 我答对了</button>` +
+        `<button class="btn secondary" style="margin-left:6px;padding:4px 12px;font-size:12px;" onclick="selfGrade('${qid}',false)">✗ 没答好</button>`;
+    });
+  });
+
+  updateProgress();
+}
+
+function toggleRef(qid) {
+  document.getElementById("ref-" + qid).classList.toggle("show");
+}
+function toggleHint(qid) {
+  document.getElementById("hint-" + qid).classList.toggle("show");
+}
+
+function selfGrade(qid, passed) {
+  const q = QUESTIONS.find(x => x.id === qid);
+  const fb = document.getElementById("vd-" + qid);
+  state[qid].correct = passed;
+  state[qid].score = passed ? q.score : 0;
+  fb.className = "verdict " + (passed ? "pass" : "fail");
+  fb.textContent = passed ? "✓ 已自评：答对了。" : "✗ 已自评：没答好。";
+  updateProgress();
+}
+
+/* ============================================================
+   编程题运行与判定
+   ============================================================ */
+function runCode(qid) {
+  const q = QUESTIONS.find(x => x.id === qid);
+  const editor = window["editor_" + qid];
+  const code = editor.getValue();
+
+  const outBox = document.getElementById("out-" + qid);
+  const outVal = document.getElementById("out-val-" + qid);
+  const vd = document.getElementById("vd-" + qid);
+
+  outBox.style.display = "block";
+  vd.className = "verdict";
+  vd.style.display = "none";
+
+  const result = executeKotlin(code);
+
+  if (result.errors.length > 0) {
+    outVal.innerHTML = result.errors.map(e => `<span class="err">⚠ ${e}</span>`).join("\n");
+    vd.className = "verdict fail";
+    vd.style.display = "block";
+    vd.textContent = "✗ 代码有错误，请先修正上面的问题。";
+    state[qid].answered = true;
+    state[qid].correct = false;
+    state[qid].score = 0;
+    state[qid].data = { code, output: result.output, errors: result.errors, passed: false, extraChecks: [] };
+    updateProgress();
+    return;
+  }
+
+  outVal.textContent = result.output.length === 0 ? "（没有输出）" : result.output;
+  outVal.className = "val";
+
+  const normalize = s => s.replace(/\r\n/g, "\n").replace(/\s+$/, "");
+  const actual = normalize(result.output);
+  const expected = normalize(q.expected);
+
+  // 附加检查
+  const extraResults = [];
+  let extraPass = true;
+  if (q.checks && q.checks.length > 0) {
+    q.checks.forEach(c => {
+      let ok = true;
+      if (c.type === "singleComment") ok = /\/\//.test(code);
+      else if (c.type === "multiComment") ok = /\/\*[\s\S]*?\*\//.test(code);
+      else if (c.type === "nestedComment") ok = hasNestedComment(code);
+      else if (c.type === "mustUsePrint") {
+        const cleaned = removeComments(code);
+        const regex = new RegExp(`print\\s*\\(\\s*"${c.arg}"\\s*\\)`);
+        ok = regex.test(cleaned);
+      }
+      else if (c.type === "noChinesePunct") ok = !/[“”（）]/.test(code);
+      else if (c.type === "allLower") ok = !/(^|[^a-zA-Z])(Fun|Main|Println)([^a-zA-Z]|$)/.test(code);
+      extraResults.push({ type: c.type, pass: ok, msg: c.msg });
+      if (!ok) extraPass = false;
+    });
+  }
+
+  const outputPass = actual === expected;
+  const passed = outputPass && extraPass;
+
+  if (passed) {
+    vd.className = "verdict pass";
+    vd.style.display = "block";
+    vd.textContent = "✓ 完全正确！输出与期望一致" + (q.checks.length ? "，附加检查也全部通过。" : "。");
+  } else if (!outputPass) {
+    vd.className = "verdict fail";
+    vd.style.display = "block";
+    vd.innerHTML = `✗ 输出不对。<br>你输出的是：<code>${JSON.stringify(actual)}</code><br>期望的是：<code>${JSON.stringify(expected)}</code>`;
+  } else {
+    vd.className = "verdict fail";
+    vd.style.display = "block";
+    const failedMsgs = extraResults.filter(r => !r.pass).map(r => "· " + r.msg).join("<br>");
+    vd.innerHTML = `✗ 输出对了，但附加检查没过：<br>${failedMsgs}`;
+  }
+
+  state[qid].answered = true;
+  state[qid].correct = passed;
+  state[qid].score = passed ? q.score : 0;
+  state[qid].data = {
+    code,
+    output: result.output,
+    expected: q.expected,
+    outputPass,
+    extraPass,
+    extraChecks: extraResults,
+    passed
+  };
+  updateProgress();
+}
+
+function resetCode(qid) {
+  const q = QUESTIONS.find(x => x.id === qid);
+  window["editor_" + qid].setValue(q.initial);
+  document.getElementById("out-" + qid).style.display = "none";
+  document.getElementById("vd-" + qid).style.display = "none";
+  document.getElementById("vd-" + qid).className = "verdict";
+  state[qid].answered = false;
+  state[qid].correct = false;
+  state[qid].score = 0;
+  state[qid].data = null;
+  updateProgress();
+}
+
+/* ============================================================
+   进度条 & 得分
+   ============================================================ */
+function updateProgress() {
+  const bar = document.getElementById("progress");
+  bar.innerHTML = "";
+  let totalScore = 0, gotScore = 0;
+
+  QUESTIONS.forEach(q => {
+    const s = state[q.id];
+    totalScore += q.score;
+    if (s.answered) gotScore += s.score;
+
+    const dot = document.createElement("div");
+    dot.className = "dot";
+    if (s.answered && s.correct) dot.classList.add("pass");
+    else if (s.answered && !s.correct) dot.classList.add("partial");
+    dot.title = q.id + "：" + (s.answered ? (s.correct ? "正确" : "错误") : "未作答");
+    bar.appendChild(dot);
+  });
+
+  document.getElementById("scoreNum").textContent = gotScore;
+  document.getElementById("totalNum").textContent = totalScore;
+}
+
+/* ============================================================
+   导出 JSON
+   ============================================================ */
+function exportJSON() {
+  const exportData = {
+    meta: {
+      title: "Kotlin 第一章练习作答记录",
+      exportedAt: new Date().toISOString(),
+      totalScore: 0,
+      gotScore: 0
+    },
+    answers: {}
+  };
+
+  QUESTIONS.forEach(q => {
+    const s = state[q.id];
+    exportData.meta.totalScore += q.score;
+    exportData.meta.gotScore += s.score;
+
+    const item = {
+      id: q.id,
+      type: q.type,
+      score: q.score,
+      answered: s.answered,
+      correct: s.correct,
+      gotScore: s.score,
+      title: q.title
+    };
+
+    if (s.data) {
+      if (q.type === "choice") {
+        item.selectedIndex = s.data.selected;
+        item.selectedText = s.data.selectedText;
+        item.correctIndex = q.correct;
+        item.correctText = q.options[q.correct];
+      } else if (q.type === "fill") {
+        item.userAnswer = s.data.answer;
+        item.standardAnswer = q.answer;
+      } else if (q.type === "subj") {
+        item.userAnswer = s.data.answer;
+        item.selfGrade = s.correct;
+        item.reference = q.reference.replace(/<[^>]+>/g, "");
+      } else if (q.type === "code") {
+        item.code = s.data.code;
+        item.actualOutput = s.data.output;
+        item.expectedOutput = s.data.expected || q.expected;
+        item.outputPass = s.data.outputPass;
+        item.extraPass = s.data.extraPass;
+        item.extraChecks = s.data.extraChecks;
+        item.passed = s.data.passed;
+      }
+    }
+    exportData.answers[q.id] = item;
+  });
+
+  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "kotlin-ch1-answers-" + new Date().toISOString().slice(0, 10) + ".json";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/* ============================================================
+   Monaco Editor 初始化
+   ============================================================ */
+function initMonaco() {
+  monaco.languages.register({ id: "kotlin" });
+
+  monaco.languages.setMonarchTokensProvider("kotlin", {
+    keywords: ["fun", "val", "var", "if", "else", "when", "for", "while", "return", "true", "false", "null", "class", "object", "import", "package"],
+    tokenizer: {
+      root: [
+        [/\/\/.*$/, "comment"],
+        [/\/\*/, "comment", "@comment"],
+        [/".*?"/, "string"],
+        [/[a-zA-Z_]\w*/, { cases: { "@keywords": "keyword", "@default": "identifier" } }],
+        [/\d+/, "number"],
+        [/[{}()\[\]]/, "@brackets"],
+      ],
+      comment: [
+        [/[^/*]+/, "comment"],
+        [/\*\//, "comment", "@pop"],
+        [/[/*]/, "comment"]
+      ]
+    }
+  });
+
+  monaco.languages.registerCompletionItemProvider("kotlin", {
+    provideCompletionItems: function (model, position) {
+      const word = model.getWordUntilPosition(position);
+      const range = {
+        startLineNumber: position.lineNumber,
+        endLineNumber: position.lineNumber,
+        startColumn: word.startColumn,
+        endColumn: word.endColumn
+      };
+      const suggestions = [
+        { label: "fun", kind: monaco.languages.CompletionItemKind.Keyword, insertText: "fun ", detail: "定义函数", range },
+        { label: "main", kind: monaco.languages.CompletionItemKind.Function, insertText: "main() {\n\t$0\n}", insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, detail: "程序入口", range },
+        { label: "println", kind: monaco.languages.CompletionItemKind.Function, insertText: 'println("$0")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, detail: "打印并换行", range },
+        { label: "print", kind: monaco.languages.CompletionItemKind.Function, insertText: 'print("$0")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, detail: "打印不换行", range }
+      ];
+      return { suggestions };
+    }
+  });
+
+  QUESTIONS.filter(q => q.type === "code").forEach(q => {
+    const el = document.getElementById("editor-" + q.id);
+    const editor = monaco.editor.create(el, {
+      value: q.initial,
+      language: "kotlin",
+      theme: "vs-dark",
+      fontSize: 14,
+      minimap: { enabled: false },
+      automaticLayout: true,
+      scrollBeyondLastLine: false,
+      lineNumbers: "on",
+      tabSize: 4,
+      renderWhitespace: "selection",
+      suggestOnTriggerCharacters: true,
+      quickSuggestions: { other: true, comments: false, strings: false },
+      wordBasedSuggestions: true,
+    });
+    window["editor_" + q.id] = editor;
+  });
+}
+
+/* ============================================================
+   启动
+   ============================================================ */
+renderAll();
+require.config({ paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs" } });
+require(["vs/editor/editor.main"], function () {
+  initMonaco();
+});
+</script>
+</body>
+</html>
